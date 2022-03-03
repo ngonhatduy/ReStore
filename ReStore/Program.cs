@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ReStore.Data;
+using ReStore.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors();
 
 //Add Connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -31,6 +33,8 @@ catch (Exception ex)
     logger.LogError(ex, "Problem migrating data");
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -40,8 +44,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(opt => {
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+});
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();
