@@ -13,7 +13,7 @@ namespace ReStore.Controllers
         [HttpGet("bad-request")]
         public ActionResult GetBadRequest()
         {
-            return BadRequest(new ProblemDetails {Title = "This is bad request"});
+            return BadRequest();
         }
 
         [HttpGet("unauthorized")]
@@ -33,7 +33,7 @@ namespace ReStore.Controllers
         [HttpGet("server-error")]
         public ActionResult GetServerError()
         {
-            throw new Exception("This is server error");
+            throw new Exception("test error");
         }
     }
 }
