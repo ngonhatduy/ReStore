@@ -39,24 +39,14 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{ }
-    //app.UseSwagger();
-
-    //}
-    //app.UseSwagger(option =>
-    //{
-    //    option.RouteTemplate = "swagger/{documentName}/swagger.json";
-    //});
-    //app.UseSwaggerUI(option =>
-    //{
-    //    option.SwaggerEndpoint("/swagger/v1/swagger.json", "RestoreAPI");
-    //});
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseHttpsRedirection();
+}
+app.UseHttpsRedirection();
 
 app.UseCors(opt => {
-    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
 });
 
 app.UseAuthorization();

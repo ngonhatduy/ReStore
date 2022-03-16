@@ -15,31 +15,16 @@ namespace ReStore.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetBasket")]
         public async Task<ActionResult<BasketModel>> GetBasket()
         {
             var basket = await RetrieveBasket();
 
             if (basket == null) return NotFound();
 
-            return new BasketModel
-            {
-                Id = basket.Id,
-                BuyerId = basket.BuyerId,
-                Items = basket.Items.Select(item => new BasketItemModel
-                {
-                    ProductId = item.ProductId,
-                    Name = item.Product.Name,
-                    Price = item.Product.Price,
-                    PictureUrl = item.Product.PictureUrl,
-                    Type = item.Product.Type,
-                    Brand = item.Product.Brand,
-                    Quantity = item.Quantity
-
-                }).ToList()
-            };
+            return MapBasketToModel(basket);
         }
-        
+
         [HttpPost]
         public async Task<ActionResult> AddItemToBasket(int productId, int quantity)
         {
@@ -50,7 +35,7 @@ namespace ReStore.Controllers
             basket.AddItem(product, quantity);
 
             var result = await _context.SaveChangesAsync() > 0;
-            if(result) return StatusCode(201);
+            if(result) return CreatedAtRoute("GetBasket", MapBasketToModel(basket));
 
             return BadRequest(new ProblemDetails { Title = "problem saving item to basket" });
         }
@@ -61,7 +46,6 @@ namespace ReStore.Controllers
             var basket = await RetrieveBasket();
             if (basket == null) return NotFound();
             basket.RemoveItem(productId, quantity);
-
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result) return Ok();
@@ -90,6 +74,26 @@ namespace ReStore.Controllers
             var basket = new Basket { BuyerId = buyerId };
             _context.Baskets.Add(basket);
             return basket;
+        }
+
+        private static BasketModel MapBasketToModel(Basket basket)
+        {
+            return new BasketModel
+            {
+                Id = basket.Id,
+                BuyerId = basket.BuyerId,
+                Items = basket.Items.Select(item => new BasketItemModel
+                {
+                    ProductId = item.ProductId,
+                    Name = item.Product.Name,
+                    Price = item.Product.Price,
+                    PictureUrl = item.Product.PictureUrl,
+                    Type = item.Product.Type,
+                    Brand = item.Product.Brand,
+                    Quantity = item.Quantity
+
+                }).ToList()
+            };
         }
     }
 }
