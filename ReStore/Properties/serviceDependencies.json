@@ -1,11 +1,8 @@
 {
   "dependencies": {
-    "apis1": {
-      "type": "apis"
-    },
     "mssql1": {
       "type": "mssql",
-      "connectionId": "ConnectionStrings:Restore"
+      "connectionId": "ConnectionStrings:DefaultConnection"
     }
   }
 }

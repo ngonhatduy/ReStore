@@ -30,7 +30,7 @@ namespace ReStore.Middleware
 
                 var response = new ProblemDetails
                 {
-                    Title = "This is server error",
+                    Title = ex.Message,
                     Status = 500,
                     Detail = _env.IsDevelopment() ? ex.StackTrace?.ToString() : null
                 };
